@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "GMGN Analyzer",
+  "version": "1.0",
+  "description": "让您的GMGN更上一层楼",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "sidePanel",
+    "scripting"
+  ],
+  "action": {
+    "default_title": "打开GMGN分析器"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "host_permissions": [
+    "https://*.gmgn.ai/*",
+    "<all_urls>"
+  ],
+  "icons": {
+    "48": "icon.png",
+    "128": "icon.png"
+  }
+} 
