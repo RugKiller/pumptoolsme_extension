@@ -83,20 +83,70 @@
       border-left: 4px solid #f44336;
     }
 
-    .detail-section {
-      margin-top: 12px;
+    .section-card {
       background: white;
-      border-radius: 4px;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
 
-    .detail-section h3 {
-      margin: 0;
-      padding: 10px;
-      background-color: #f8f9fa;
-      border-bottom: 1px solid #eee;
+    .section-title {
+      margin: 0 0 12px 0;
+      color: #1a73e8;
       font-size: 14px;
       font-weight: 500;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .info-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+    }
+
+    .info-label {
+      color: #666;
+      font-size: 13px;
+    }
+
+    .info-value {
+      color: #1a73e8;
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    .analysis-results {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .detail-section {
+      margin-top: 0;
+    }
+
+    .history-section {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .history-section h4:first-child {
+      margin-top: 0;
+      color: #1a73e8;
+    }
+
+    .stats-grid {
+      margin: 12px 0;
     }
 
     .modification-log {
@@ -138,10 +188,6 @@
       font-weight: 500;
     }
 
-    .history-section h4:first-child {
-      margin-top: 0;
-    }
-
     .tokens-table {
       width: 100%;
       border-collapse: collapse;
@@ -170,16 +216,6 @@
       background-color: #fafafa;
     }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-      margin-bottom: 6px;
-      background: #f8f9fa;
-      padding: 6px;
-      border-radius: 4px;
-    }
-
     .stat-item {
       display: flex;
       justify-content: space-between;
@@ -202,10 +238,179 @@
       color: #d32f2f;  /* 使用红色 */
       font-weight: bold;
     }
+
+    .warning-section .stats-grid {
+      background: #fff3e0;
+      border-radius: 4px;
+      padding: 12px;
+    }
+
+    .twitter-section h4 {
+      margin: 16px 0 8px;
+      color: #1a73e8;
+    }
+
+    .contract-info {
+      background: white;
+      border: 1px solid #e0e0e0;
+      padding: 12px;
+    }
+
+    .contract-info .section-title {
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .contract-info .info-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .info-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-row .info-label {
+      color: #666;
+      font-size: 12px;
+      min-width: 70px;
+    }
+
+    .info-row .info-value {
+      color: #1a73e8;
+      font-size: 12px;
+      text-align: right;
+      flex: 1;
+    }
+
+    .info-row .info-value.monospace {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      font-size: 11px;
+      background: #f5f5f5;
+      padding: 2px 4px;
+      border-radius: 3px;
+      border: 1px solid #eee;
+    }
+
+    .section-title {
+      color: #202124;
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .stats-grid.no-data {
+      background: #e8f5e9;  /* 使用绿色背景表示安全 */
+      text-align: center;
+      padding: 16px;
+    }
+
+    .stats-grid.no-data .stat-item {
+      justify-content: center;
+    }
+
+    .stats-grid.no-data .stat-value {
+      color: #4CAF50;  /* 使用绿色文字 */
+      font-size: 14px;
+    }
+
+    .usage-guide {
+      background: #f3f6fc;
+      border: 1px solid #e3e9f3;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #444;
+    }
+
+    .usage-guide h3 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+      color: #1a73e8;
+      font-weight: 500;
+    }
+
+    .usage-guide ol {
+      margin: 0;
+      padding-left: 24px;
+    }
+
+    .usage-guide li {
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .usage-guide li:last-child {
+      margin-bottom: 0;
+    }
+
+    .usage-guide code {
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 12px;
+      background: #fff;
+      padding: 2px 4px;
+      border-radius: 3px;
+      color: #666;
+      word-break: break-all;
+    }
+
+    .usage-guide a {
+      color: #1a73e8;
+      text-decoration: none;
+    }
+
+    .usage-guide a:hover {
+      text-decoration: underline;
+    }
+
+    .usage-guide a code {
+      color: #1a73e8;  /* 让代码块的颜色与链接一致 */
+    }
+
+    .twitter-link {
+      color: #1a73e8;
+      text-decoration: none;
+    }
+
+    .twitter-link:hover {
+      text-decoration: underline;
+    }
+
+    .warning-header {
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #dc2626;
+      font-weight: 500;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
-  <button id="analyzeBtn">分析当前页面</button>
+  <div class="warning-header">
+    注意：本插件只专注于分析合约的创建者以及绑定推特的高风险行为，不关注其他角度！！！祝各位老板们早日发财！！！
+  </div>
+  <div class="usage-guide">
+    <h3>使用说明：</h3>
+    <ol>
+      <li>打开GMGN的合约详情页面，比如 <a href="https://gmgn.ai/sol/token/dqTU84Mspi8eNwJnATCd32YZtsjV6fSvo11Fx1hpump" target="_blank"><code>https://gmgn.ai/sol/token/dqTU84Mspi8eNwJnATCd32YZtsjV6fSvo11Fx1hpump</code></a></li>
+      <li>点击下方"分析当前合约"按钮</li>
+      <li>查看分析结果</li>
+    </ol>
+  </div>
+  <button id="analyzeBtn">分析当前合约</button>
   <div id="result"></div>
   <script src="analyzer.js"></script>
   <script src="analyzer-rules.js"></script>

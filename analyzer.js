@@ -231,55 +231,94 @@ class GMGNAnalyzer {
   static updateUI(result, elementId = 'result') {
     this.log('开始更新UI:', result);
     const resultDiv = document.getElementById(elementId);
+    const usageGuide = document.querySelector('.usage-guide');
+    
     if (!resultDiv) {
       this.log('未找到结果显示元素:', elementId);
       return;
     }
 
-    if (!result.success) {
+    // 统一错误处理函数
+    const showError = () => {
+      resultDiv.innerHTML = `
+        <div class="result-item error">
+          ❌ 请打开GMGN的合约详情页面再点击按钮
+        </div>
+      `;
+    };
+
+    // 检查基本错误情况
+    if (!result.success || !result.isGMGN || !result.pageInfo || !result.pageInfo.success) {
       this.log('显示错误信息:', result.error);
-      resultDiv.textContent = '❌ 分析失败: ' + result.error;
-      resultDiv.style.backgroundColor = '#ffebee';
+      showError();
       return;
     }
 
-    if (result.pageInfo) {
-      this.log('显示页面详细信息');
-      let html = result.isGMGN ? 
-        `<div style="margin-bottom: 10px">✅ 当前页面是 GMGN.ai 网站</div>` : 
-        `<div style="margin-bottom: 10px">❌ 当前页面 (${result.domain}) 不是 GMGN.ai 网站</div>`;
+    // 检查是否获取到了任何有效信息
+    const pageData = result.pageInfo.data;
+    const isValidValue = (value) => value && value !== '未找到' && value !== '解析失败';
+    
+    const hasAnyValidData = pageData && (
+      isValidValue(pageData.content?.value) ||
+      isValidValue(pageData.contract?.value) ||
+      isValidValue(pageData.creator?.value) ||
+      isValidValue(pageData.twitter?.value)
+    );
 
-      if (result.pageInfo.success) {
-        const info = result.pageInfo.data;
-        this.log('解析到的页面信息:', info);
-        html += '<div style="background-color: #f5f5f5; padding: 10px; border-radius: 4px;">';
-        for (const [type, data] of Object.entries(info)) {
-          if (type !== 'pageUrl') {  // 跳过页面URL的显示
-            html += `<div style="margin: 5px 0;">
-              <strong>${data.name}:</strong> ${data.value}
-            </div>`;
-          }
-        }
-        html += '</div>';
-
-        // 如果有分析结果，显示分析结果
-        if (result.pageInfo.analysis) {
-          html += '<div style="margin-top: 20px;">';
-          html += GMGNRules.getResultHTML(result.pageInfo.analysis);
-          html += '</div>';
-        }
-      }
-
-      resultDiv.innerHTML = html;
-      resultDiv.style.backgroundColor = result.isGMGN ? '#e8f5e9' : '#ffebee';
-    } else {
-      this.log('显示基本URL分析结果');
-      resultDiv.textContent = result.isGMGN ? 
-        `✅ 当前页面是 GMGN.ai 网站` : 
-        `❌ 当前页面 (${result.domain}) 不是 GMGN.ai 网站`;
-      resultDiv.style.backgroundColor = result.isGMGN ? '#e8f5e9' : '#ffebee';
+    if (!hasAnyValidData) {
+      showError();
+      return;
     }
-    this.log('UI更新完成');
+
+    this.log('显示页面详细信息');
+    // 如果数据获取成功，隐藏使用说明
+    if (usageGuide) {
+      usageGuide.style.display = 'none';
+    }
+
+    let html = `
+      <div class="section-card contract-info">
+        <h3 class="section-title">合约基本信息</h3>
+        <div class="info-grid">
+          ${this.formatContractInfo(pageData)}
+        </div>
+      </div>
+    `;
+
+    if (result.pageInfo.analysis) {
+      html += GMGNRules.getResultHTML(result.pageInfo.analysis);
+    }
+
+    resultDiv.innerHTML = html;
+  }
+
+  // 新增方法来格式化合约信息
+  static formatContractInfo(info) {
+    const formatTwitterValue = (value) => {
+      if (value && value.startsWith('https://')) {
+        return `<a href="${value}" target="_blank" class="twitter-link">${value.replace('https://x.com/', '@')}</a>`;
+      }
+      return value || '-';
+    };
+
+    const infoMap = {
+      'content': { label: '代币符号', value: info.content?.value || '-' },
+      'contract': { label: '合约地址', value: info.contract?.value || '-' },
+      'creator': { label: '合约创建者', value: info.creator?.value || '-' },
+      'twitter': { 
+        label: '绑定推特', 
+        value: formatTwitterValue(info.twitter?.value)
+      }
+    };
+
+    return Object.entries(infoMap)
+      .filter(([key]) => key !== 'pageUrl')
+      .map(([key, data]) => `
+        <div class="info-row">
+          <div class="info-label">${data.label}</div>
+          <div class="info-value ${key === 'contract' || key === 'creator' ? 'monospace' : ''}">${data.value}</div>
+        </div>
+      `).join('');
   }
 }
 

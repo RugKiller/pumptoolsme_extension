@@ -11,7 +11,7 @@ class GMGNRules {
           return {
             level: 'warning',
             message: '未绑定推特账号',
-            details: null
+            details: this.formatHistoryData(null)
           };
         }
 
@@ -60,7 +60,7 @@ class GMGNRules {
               return {
                 level: 'success',
                 message: '未发现异常历史',
-                details: null
+                details: this.formatHistoryData(null)
               };
             }
           } else {
@@ -68,7 +68,7 @@ class GMGNRules {
             return {
               level: 'error',
               message: '检查失败: API返回非成功状态',
-              details: null
+              details: this.formatHistoryData(null)
             };
           }
         } catch (error) {
@@ -76,7 +76,7 @@ class GMGNRules {
           return {
             level: 'error',
             message: '检查失败: ' + error.message,
-            details: null
+            details: this.formatHistoryData(null)
           };
         }
       }
@@ -85,6 +85,20 @@ class GMGNRules {
 
   // 格式化历史数据为HTML表格
   static formatHistoryData(data) {
+    // 如果没有数据，显示"没有发现异常"
+    if (!data || data.length === 0) {
+      return `
+        <div class="section-card warning-section">
+          <h3 class="section-title">重要告警信息</h3>
+          <div class="stats-grid no-data">
+            <div class="stat-item">
+              <span class="stat-value">没有发现异常！仅仅说明绑定的推特没有异常，但并不表明该推特是发布方持有，请务必注意风险！！！</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     // 统计各类修改次数
     const stats = {
       delete_tweet: 0,
@@ -163,17 +177,20 @@ class GMGNRules {
       .split('</br>')
       .filter(token => token.trim()).length;
 
-    return `
-      <div class="history-section">
-        <h4>账号行为统计</h4>
+    // 1. 页面基本信息在 analyzer.js 中已经处理
+
+    // 2. 重要告警信息（账号行为统计）
+    const warningSection = `
+      <div class="section-card warning-section">
+        <h3 class="section-title">重要告警信息-关于绑定推特</h3>
         <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">历史发币数：</span>
+            <span class="stat-value${tokenCount > 0 ? ' highlight' : ''}">${tokenCount}</span>
+          </div>
           <div class="stat-item">
             <span class="stat-label">删除推文次数：</span>
             <span class="stat-value${stats.delete_tweet > 0 ? ' highlight' : ''}">${stats.delete_tweet}</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">修改账号描述次数：</span>
-            <span class="stat-value${stats.modify_description > 0 ? ' highlight' : ''}">${stats.modify_description}</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">修改用户名次数：</span>
@@ -184,12 +201,17 @@ class GMGNRules {
             <span class="stat-value${stats.modify_show_name > 0 ? ' highlight' : ''}">${stats.modify_show_name}</span>
           </div>
           <div class="stat-item">
-            <span class="stat-label">历史发币数：</span>
-            <span class="stat-value${tokenCount > 0 ? ' highlight' : ''}">${tokenCount}</span>
+            <span class="stat-label">修改账号描述次数：</span>
+            <span class="stat-value${stats.modify_description > 0 ? ' highlight' : ''}">${stats.modify_description}</span>
           </div>
         </div>
+      </div>
+    `;
 
-        <h4>修改历史</h4>
+    // 3. 推特行为分析
+    const twitterAnalysis = `
+      <div class="section-card twitter-section">
+        <h3 class="section-title">推特高危行为详情</h3>
         <table class="history-table">
           <thead>
             <tr>
@@ -220,7 +242,7 @@ class GMGNRules {
           </tbody>
         </table>
 
-        <h4>相关代币</h4>
+        <h4>历史绑定了该推特的代币</h4>
         <table class="tokens-table">
           <thead>
             <tr>
@@ -235,6 +257,8 @@ class GMGNRules {
         </table>
       </div>
     `;
+
+    return warningSection + twitterAnalysis;
   }
 
   // 执行所有分析
@@ -275,24 +299,11 @@ class GMGNRules {
   static getResultHTML(analysisResults) {
     let html = '<div class="analysis-results">';
     
-    // 添加摘要部分
-    html += '<div class="summary">';
-    for (const item of analysisResults.summary) {
-      html += `
-        <div class="result-item ${item.level}">
-          <strong>${item.name}:</strong> ${item.message}
-        </div>
-      `;
-    }
-    html += '</div>';
-
     // 添加详细信息部分
-    html += '<div class="details">';
     for (const [ruleId, detail] of Object.entries(analysisResults.details)) {
       if (detail.details) {
         html += `
           <div class="detail-section">
-            <h3>${detail.name}</h3>
             ${detail.details}
           </div>
         `;
@@ -300,7 +311,7 @@ class GMGNRules {
     }
     html += '</div>';
     
-    return html + '</div>';
+    return html;
   }
 }
 
