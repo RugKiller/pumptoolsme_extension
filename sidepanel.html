@@ -8,6 +8,16 @@
       padding: 12px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       margin: 0;
+      min-height: 100vh;  /* 确保body至少有视口高度 */
+      display: flex;      /* 使用flex布局 */
+      flex-direction: column;  /* 垂直方向排列 */
+      overflow-x: hidden;  /* 禁止水平滚动 */
+    }
+
+    /* 主要内容区域 */
+    .main-content {
+      flex: 1;           /* 占用剩余空间 */
+      margin-bottom: 20px;  /* 与底部Contact Us的间距 */
     }
 
     button {
@@ -41,6 +51,7 @@
       background: white;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       border-radius: 4px;
+      table-layout: fixed;  /* 使用固定表格布局 */
     }
 
     .history-table th,
@@ -49,12 +60,30 @@
       padding: 4px 6px;
       text-align: left;
       word-break: break-all;
+      max-width: 280px;  /* 设置最大宽度 */
+      overflow-wrap: break-word;  /* 允许单词内换行 */
+      word-wrap: break-word;
     }
 
     .history-table th {
       background-color: #f8f9fa;
       font-weight: 500;
       color: #444;
+    }
+
+    .history-table th:first-child,
+    .tokens-table th:first-child {
+      width: 20%;
+    }
+
+    .history-table th:nth-child(2),
+    .tokens-table th:nth-child(2) {
+      width: 25%;
+    }
+
+    .history-table th:last-child,
+    .tokens-table th:last-child {
+      width: 55%;
     }
 
     .history-table tr:nth-child(even) {
@@ -155,6 +184,10 @@
       line-height: 1.4;
       font-size: 12px;
       padding-right: 8px;
+      max-width: 280px;  /* 设置最大宽度 */
+      overflow-wrap: break-word;  /* 允许单词内换行 */
+      word-wrap: break-word;
+      word-break: break-all;  /* 允许在任何字符间换行 */
     }
 
     .modification-log strong {
@@ -196,6 +229,7 @@
       background: white;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       border-radius: 4px;
+      table-layout: fixed;  /* 使用固定表格布局 */
     }
 
     .tokens-table th,
@@ -204,6 +238,9 @@
       padding: 4px 6px;
       text-align: left;
       word-break: break-all;
+      max-width: 280px;  /* 设置最大宽度 */
+      overflow-wrap: break-word;  /* 允许单词内换行 */
+      word-wrap: break-word;
     }
 
     .tokens-table th {
@@ -287,6 +324,10 @@
       font-size: 12px;
       text-align: right;
       flex: 1;
+      max-width: 280px;  /* 设置最大宽度 */
+      overflow-wrap: break-word;  /* 允许单词内换行 */
+      word-wrap: break-word;
+      word-break: break-all;  /* 允许在任何字符间换行 */
     }
 
     .info-row .info-value.monospace {
@@ -361,6 +402,9 @@
       border-radius: 3px;
       color: #666;
       word-break: break-all;
+      max-width: 280px;  /* 设置最大宽度 */
+      overflow-wrap: break-word;  /* 允许单词内换行 */
+      word-wrap: break-word;
     }
 
     .usage-guide a {
@@ -396,22 +440,85 @@
       font-weight: 500;
       line-height: 1.4;
     }
+
+    .contact-us {
+      position: sticky;
+      bottom: 0;
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+      margin-top: auto;
+      z-index: 100;
+    }
+
+    .contact-us h3 {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+      color: #dc2626;
+      font-weight: 500;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .contact-link {
+      color: #dc2626;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .contact-link:hover {
+      text-decoration: underline;
+      opacity: 0.9;
+    }
+
+    .contact-link img {
+      width: 16px;
+      height: 16px;
+      filter: invert(23%) sepia(92%) saturate(5641%) hue-rotate(353deg) brightness(87%) contrast(95%);
+    }
   </style>
 </head>
 <body>
-  <div class="warning-header">
-    注意：本插件只专注于分析合约的创建者以及绑定推特的高风险行为，不关注其他角度！！！祝各位老板们早日发财！！！
+  <div class="main-content">
+    <div class="warning-header">
+      注意：本插件只专注于分析合约的创建者以及绑定推特的高风险行为，不关注其他角度！！！祝各位老板们早日发财！！！
+    </div>
+    <div class="usage-guide">
+      <h3>使用说明：</h3>
+      <ol>
+        <li>打开GMGN的合约详情页面，比如 <a href="https://gmgn.ai/sol/token/dqTU84Mspi8eNwJnATCd32YZtsjV6fSvo11Fx1hpump" target="_blank"><code>https://gmgn.ai/sol/token/dqTU84Mspi8eNwJnATCd32YZtsjV6fSvo11Fx1hpump</code></a></li>
+        <li>点击下方"分析当前合约"按钮</li>
+        <li>查看分析结果</li>
+      </ol>
+    </div>
+    <button id="analyzeBtn">分析当前合约</button>
+    <div id="result"></div>
   </div>
-  <div class="usage-guide">
-    <h3>使用说明：</h3>
-    <ol>
-      <li>打开GMGN的合约详情页面，比如 <a href="https://gmgn.ai/sol/token/dqTU84Mspi8eNwJnATCd32YZtsjV6fSvo11Fx1hpump" target="_blank"><code>https://gmgn.ai/sol/token/dqTU84Mspi8eNwJnATCd32YZtsjV6fSvo11Fx1hpump</code></a></li>
-      <li>点击下方"分析当前合约"按钮</li>
-      <li>查看分析结果</li>
-    </ol>
+
+  <div class="contact-us">
+    <h3>Contact Us</h3>
+    <div class="contact-links">
+      <a href="https://t.me/pumptools_me" target="_blank" class="contact-link">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a73e8'%3E%3Cpath d='M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.015-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.48-.428-.009-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.892-.663 3.498-1.524 5.831-2.529 6.998-3.015 3.333-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.119.098.152.228.166.331.016.122.037.384.021.598z'/%3E%3C/svg%3E" alt="Telegram">
+        Telegram Group
+      </a>
+      <a href="https://x.com/pumptools_me" target="_blank" class="contact-link">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a73e8'%3E%3Cpath d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z'/%3E%3C/svg%3E" alt="Twitter">
+        Twitter
+      </a>
+    </div>
   </div>
-  <button id="analyzeBtn">分析当前合约</button>
-  <div id="result"></div>
+
   <script src="analyzer.js"></script>
   <script src="analyzer-rules.js"></script>
   <script src="sidepanel.js"></script>
