@@ -14,10 +14,19 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
       console.log('检测到GMGN网站，开始提取页面信息...');
       const pageInfo = await GMGNAnalyzer.extractPageInfo(tab);
       console.log('页面信息提取结果:', pageInfo);
+
+      if (pageInfo.success) {
+        console.log('开始执行规则分析...');
+        // 执行规则分析
+        const analysisResults = await GMGNRules.analyze(pageInfo.data);
+        console.log('规则分析结果:', analysisResults);
+        pageInfo.analysis = analysisResults;
+      }
+
       urlResult.pageInfo = pageInfo;
     }
     
-    // 更新UI显示结果
+    // 只需要调用一次updateUI
     console.log('更新UI显示...');
     GMGNAnalyzer.updateUI(urlResult);
   } catch (error) {

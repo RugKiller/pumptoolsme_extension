@@ -4,6 +4,11 @@ chrome.runtime.onInstalled.addListener(async () => {
   await chrome.sidePanel.setOptions({
     enabled: true
   });
+
+  // 设置侧边栏在点击插件图标时打开
+  await chrome.sidePanel
+    .setPanelBehavior({ openPanelOnActionClick: true })
+    .catch((error) => console.error(error));
 });
 
 // 当用户点击插件图标时切换侧边栏

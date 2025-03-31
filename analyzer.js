@@ -254,11 +254,20 @@ class GMGNAnalyzer {
         this.log('解析到的页面信息:', info);
         html += '<div style="background-color: #f5f5f5; padding: 10px; border-radius: 4px;">';
         for (const [type, data] of Object.entries(info)) {
-          html += `<div style="margin: 5px 0;">
-            <strong>${data.name}:</strong> ${data.value}
-          </div>`;
+          if (type !== 'pageUrl') {  // 跳过页面URL的显示
+            html += `<div style="margin: 5px 0;">
+              <strong>${data.name}:</strong> ${data.value}
+            </div>`;
+          }
         }
         html += '</div>';
+
+        // 如果有分析结果，显示分析结果
+        if (result.pageInfo.analysis) {
+          html += '<div style="margin-top: 20px;">';
+          html += GMGNRules.getResultHTML(result.pageInfo.analysis);
+          html += '</div>';
+        }
       }
 
       resultDiv.innerHTML = html;

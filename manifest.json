@@ -5,12 +5,11 @@
   "description": "让您的GMGN更上一层楼",
   "permissions": [
     "activeTab",
-    "tabs",
-    "sidePanel",
-    "scripting"
+    "scripting",
+    "sidePanel"
   ],
   "action": {
-    "default_title": "打开GMGN分析器"
+    "default_icon": "icon.png"
   },
   "background": {
     "service_worker": "background.js"
