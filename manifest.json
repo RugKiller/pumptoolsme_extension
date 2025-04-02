@@ -19,7 +19,8 @@
   },
   "host_permissions": [
     "https://*.gmgn.ai/*",
-    "<all_urls>"
+    "<all_urls>",
+    "*://*.okx.com/*"
   ],
   "icons": {
     "48": "icon.png",

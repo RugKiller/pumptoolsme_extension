@@ -18,6 +18,7 @@
     .main-content {
       flex: 1;           /* 占用剩余空间 */
       margin-bottom: 20px;  /* 与底部Contact Us的间距 */
+      margin-top: 36px;  /* 添加上边距 */
     }
 
     button {
@@ -439,6 +440,8 @@
       color: #dc2626;
       font-weight: 500;
       line-height: 1.4;
+      position: relative;  /* 添加相对定位 */
+      z-index: 1;         /* 确保在登录区域下方 */
     }
 
     .contact-us {
@@ -486,9 +489,75 @@
       height: 16px;
       filter: invert(23%) sepia(92%) saturate(5641%) hue-rotate(353deg) brightness(87%) contrast(95%);
     }
+
+    .login-section {
+      position: absolute;
+      top: 0;           /* 改为0 */
+      right: 0;         /* 改为0 */
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;  /* 添加内边距 */
+      background: #fff;   /* 添加背景色 */
+      border-bottom: 1px solid #eee;  /* 添加底部边框 */
+      width: 100%;       /* 占满宽度 */
+      box-sizing: border-box;  /* 确保padding不会增加总宽度 */
+      justify-content: flex-end;  /* 将内容靠右对齐 */
+      z-index: 1000;     /* 确保在最上层 */
+    }
+
+    .login-button {
+      background: transparent;
+      border: 1px solid #dc2626;
+      color: #dc2626;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      margin: 0;
+      width: auto;
+    }
+
+    .login-button:hover {
+      background: rgba(220, 38, 38, 0.1);
+    }
+
+    .user-info {
+      display: none;  /* 默认隐藏 */
+      font-size: 12px;
+      color: #666;
+    }
+
+    .user-info.logged-in {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logout-button {
+      background: transparent;
+      border: none;
+      color: #dc2626;
+      padding: 0;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+      width: auto;
+    }
+
+    .logout-button:hover {
+      opacity: 0.8;
+    }
   </style>
 </head>
 <body>
+  <div class="login-section">
+    <div class="user-info">
+      <span class="username"></span>
+      <button class="logout-button">退出</button>
+    </div>
+    <button class="login-button">登录</button>
+  </div>
   <div class="main-content">
     <div class="warning-header">
       注意：本插件只专注于分析合约的创建者以及绑定推特的高风险行为，不关注其他角度！！！祝各位老板们早日发财！！！
@@ -521,6 +590,7 @@
 
   <script src="analyzer.js"></script>
   <script src="analyzer-rules.js"></script>
+  <script src="auth.js"></script>
   <script src="sidepanel.js"></script>
 </body>
 </html> 
