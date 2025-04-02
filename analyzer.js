@@ -8,19 +8,22 @@ class GMGNAnalyzer {
         process: (text) => text.trim()
       },
       {
-        xpath: "//a[@id='searchca' and contains(@href, 'x.com/search?q=')]",
-        type: 'contract',
-        name: '合约地址',
+        xpath: "//a[contains(@href, '/address/') and .//div[contains(@class, 'css-1h8ua02')]]",
+        type: 'creator',
+        name: '合约创建者',
         process: (href) => {
           try {
-            const match = href.match(/[?&]q=([^&]+)/);
-            if (match && match[1]) {
-              return match[1];
+            // 从路径中提取链类型和地址
+            const match = href.match(/\/([^/]+)\/address\/([^/?]+)/);
+            if (match && match[1] && match[2]) {
+              const chain = match[1];    // 链类型 (sol, eth 等)
+              const address = match[2];   // 地址
+              return `${chain}:${address}`;  // 返回 chain:address 格式
             }
-            return '未找到合约地址';
+            return '未找到创建者地址';
           } catch (error) {
-            console.error('处理合约地址失败:', error);
-            return '处理合约地址失败';
+            console.error('处理创建者地址失败:', error);
+            return '处理创建者地址失败';
           }
         }
       },
@@ -46,26 +49,6 @@ class GMGNAnalyzer {
           } catch (error) {
             console.error('处理推特链接失败:', error);
             return '处理推特链接失败';
-          }
-        }
-      },
-      {
-        xpath: "//a[contains(@href, '/address/') and .//div[contains(@class, 'css-1h8ua02')]]",
-        type: 'creator',
-        name: '合约创建者',
-        process: (href) => {
-          try {
-            // 从路径中提取链类型和地址
-            const match = href.match(/\/([^/]+)\/address\/([^/?]+)/);
-            if (match && match[1] && match[2]) {
-              const chain = match[1];    // 链类型 (sol, eth 等)
-              const address = match[2];   // 地址
-              return `${chain}:${address}`;  // 返回 chain:address 格式
-            }
-            return '未找到创建者地址';
-          } catch (error) {
-            console.error('处理创建者地址失败:', error);
-            return '处理创建者地址失败';
           }
         }
       },
@@ -200,13 +183,27 @@ class GMGNAnalyzer {
         data: {}
       };
 
+      // 先处理基本信息
       Object.entries(result[0].result).forEach(([type, data]) => {
-        const config = this.siteConfigs['gmgn.ai'].find(c => c.type === type);
-        if (config.special === 'url') {
-          // 特殊处理：页面URL直接使用
+        if (type === 'pageUrl') {
+          // 从 pageUrl 中解析合约信息
+          const urlParts = data.value.split('/');
+          const gmgnIndex = urlParts.findIndex(part => part === 'gmgn.ai');
+          
+          if (gmgnIndex !== -1 && urlParts.length > gmgnIndex + 3) {
+            const chain = urlParts[gmgnIndex + 1];  // 获取链信息 (sol, eth 等)
+            const address = urlParts[gmgnIndex + 3];  // 获取合约地址
+            
+            processedResult.data.contract = {
+              name: '合约地址',
+              value: address,
+              chain: chain
+            };
+          }
           processedResult.data[type] = data;
-        } else if (data.needsProcessing && config && config.process) {
-          // 常规处理
+        } else if (data.needsProcessing && this.siteConfigs['gmgn.ai'].find(c => c.type === type)?.process) {
+          // 处理其他需要处理的数据
+          const config = this.siteConfigs['gmgn.ai'].find(c => c.type === type);
           processedResult.data[type] = {
             name: data.name,
             value: config.process(data.value)
@@ -271,11 +268,11 @@ class GMGNAnalyzer {
     }
 
     this.log('显示页面详细信息');
-    // 如果数据获取成功，隐藏使用说明
     if (usageGuide) {
       usageGuide.style.display = 'none';
     }
 
+    // 先显示基本信息
     let html = `
       <div class="section-card contract-info">
         <h3 class="section-title">合约基本信息</h3>
@@ -285,8 +282,20 @@ class GMGNAnalyzer {
       </div>
     `;
 
+    // 如果有规则分析结果或正在加载
     if (result.pageInfo.analysis) {
-      html += GMGNRules.getResultHTML(result.pageInfo.analysis);
+      if (result.pageInfo.analysis.isLoading) {
+        html += `
+          <div class="section-card loading-section">
+            <div class="loading-text">
+              <div class="loading-spinner"></div>
+              <span>正在分析合约信息，请稍等...</span>
+            </div>
+          </div>
+        `;
+      } else {
+        html += GMGNRules.getResultHTML(result.pageInfo.analysis);
+      }
     }
 
     resultDiv.innerHTML = html;
@@ -303,8 +312,18 @@ class GMGNAnalyzer {
 
     const infoMap = {
       'content': { label: '代币符号', value: info.content?.value || '-' },
-      'contract': { label: '合约地址', value: info.contract?.value || '-' },
-      'creator': { label: '合约创建者', value: info.creator?.value || '-' },
+      'chain': { 
+        label: '所属链', 
+        value: info.contract?.chain || '-'
+      },
+      'contract': { 
+        label: '合约地址', 
+        value: info.contract?.value || '-'
+      },
+      'creator': { 
+        label: '合约创建者', 
+        value: info.creator?.value ? info.creator.value.split(':')[1] : '-'
+      },
       'twitter': { 
         label: '绑定推特', 
         value: formatTwitterValue(info.twitter?.value)
@@ -319,6 +338,45 @@ class GMGNAnalyzer {
           <div class="info-value ${key === 'contract' || key === 'creator' ? 'monospace' : ''}">${data.value}</div>
         </div>
       `).join('');
+  }
+
+  static async getPageData() {
+    const url = window.location.href;
+    const data = {
+      contract: { value: null, chain: null },
+      twitter: { value: null }
+    };
+
+    try {
+      // 解析URL获取合约信息
+      const urlParts = url.split('/');
+      const gmgnIndex = urlParts.findIndex(part => part === 'gmgn.ai');
+      
+      if (gmgnIndex !== -1 && urlParts.length > gmgnIndex + 3) {
+        const chain = urlParts[gmgnIndex + 1];  // 获取链信息 (sol, eth 等)
+        const address = urlParts[gmgnIndex + 3];  // 获取合约地址
+        
+        if (chain && address) {
+          data.contract = {
+            value: address,
+            chain: chain
+          };
+          console.log('解析到合约信息:', data.contract);
+        }
+      }
+
+      // 获取推特信息
+      const twitterElement = document.querySelector('a[href^="https://twitter.com/"], a[href^="https://x.com/"]');
+      if (twitterElement) {
+        data.twitter.value = twitterElement.href;
+      }
+
+    } catch (error) {
+      console.error('获取页面数据失败:', error);
+    }
+
+    console.log('页面数据:', data);
+    return data;
   }
 }
 
