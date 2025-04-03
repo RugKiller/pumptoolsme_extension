@@ -1,4 +1,4 @@
-class GMGNRules {
+class ContractRules {
   // 添加规则定义
   static rules = {
     checkTwitterTokens: {
@@ -654,4 +654,4 @@ class GMGNRules {
 }
 
 // 导出分析规则类
-window.GMGNRules = GMGNRules;
+window.ContractRules = ContractRules;

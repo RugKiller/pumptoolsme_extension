@@ -44,7 +44,7 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
     analyzer.updateUI(initialResult);
 
     // 获取规则分析结果
-    const analysis = await GMGNRules.analyze(pageInfo.data);
+    const analysis = await ContractRules.analyze(pageInfo.data);
     
     // 更新结果
     const finalResult = {

@@ -324,7 +324,7 @@ class GMGNAnalyzer extends BaseAnalyzer {
           </div>
         `;
       } else {
-        html += GMGNRules.getResultHTML(result.pageInfo.analysis);
+        html += ContractRules.getResultHTML(result.pageInfo.analysis);
       }
     }
 
