@@ -35,8 +35,10 @@ class GMGNAnalyzer extends BaseAnalyzer {
             let username;
             href = href.replace(/^@/, '');
             
-            const match = href.match(/(?:twitter|x)\.com\/([^/?]+)/);
+            // 匹配 twitter.com/username 或 x.com/username，忽略后面的 status 等内容
+            const match = href.match(/(?:twitter|x)\.com\/([^/]+)/);
             if (match && match[1]) {
+              username = match[1].split('/')[0];
               username = decodeURIComponent(match[1]);
               if (['search', 'home', 'explore', 'notifications'].includes(username)) {
                 return '未找到推特账号';

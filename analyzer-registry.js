@@ -1,6 +1,7 @@
 class AnalyzerRegistry {
   static analyzers = {
     'gmgn.ai': GMGNAnalyzer,
+    'dexscreener.com': DexScreenerAnalyzer,
     // 未来可以添加更多分析器
     // 'dexscreener.com': DexScreenerAnalyzer,
   };
@@ -17,6 +18,8 @@ class AnalyzerRegistry {
       
       if (hostname.includes('gmgn.ai')) {
         return GMGNAnalyzer;
+      } else if (hostname.includes('dexscreener.com')) {
+        return DexScreenerAnalyzer;
       }
       
       return null;
