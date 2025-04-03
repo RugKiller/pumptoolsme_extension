@@ -1,16 +1,44 @@
 export class Translator {
   static currentLang = 'zh';
 
+  // 使用独立的翻译缓存，与页面数据分开
+  static translationCache = new Map();
+  static MAX_CACHE_SIZE = 1000;  // 设置缓存大小限制
+
   // 批处理相关配置
   static BATCH_SIZE = 20;  // 每批处理的最大文本数量
   static BATCH_DELAY = 100;  // 批处理延迟时间(ms)
   static pendingBatch = [];
   static batchPromise = null;
 
+  // 缓存相关方法
+  static getFromCache(text, targetLang) {
+    const cacheKey = `${text}:${targetLang}`;
+    return this.translationCache.get(cacheKey);
+  }
+
+  static setToCache(text, targetLang, translation) {
+    const cacheKey = `${text}:${targetLang}`;
+    
+    // 如果缓存已满，删除最早的条目
+    if (this.translationCache.size >= this.MAX_CACHE_SIZE) {
+      const firstKey = this.translationCache.keys().next().value;
+      this.translationCache.delete(firstKey);
+    }
+    
+    this.translationCache.set(cacheKey, translation);
+  }
+
   static async translate(text, targetLang = 'en') {
     try {
       if (!text || !text.trim()) {
         return text;
+      }
+
+      // 检查缓存
+      const cachedTranslation = this.getFromCache(text, targetLang);
+      if (cachedTranslation) {
+        return cachedTranslation;
       }
 
       // 将翻译请求添加到批处理队列
@@ -48,6 +76,13 @@ export class Translator {
         currentIndex++;
       }
 
+      // 缓存翻译结果
+      texts.forEach((text, index) => {
+        if (translations[index]) {
+          this.setToCache(text, targetLang, translations[index]);
+        }
+      });
+
       return translations;
     } catch (error) {
       console.error('Batch translation failed:', error);
@@ -76,17 +111,26 @@ export class Translator {
   static async translatePage(lang) {
     this.currentLang = lang;
 
-    // 获取所有需要翻译的文本节点
+    if (lang === 'zh') {
+      this.translationCache.clear();
+    }
+
     const walker = document.createTreeWalker(
       document.body,
       NodeFilter.SHOW_TEXT,
       {
         acceptNode: function(node) {
-          // 跳过表格内容，但允许表头
-          if (node.parentElement.closest('table') && 
-              !node.parentElement.closest('th')) {
-            return NodeFilter.FILTER_REJECT;
+          // 处理表格内容：只允许翻译表头和第一列
+          if (node.parentElement.closest('table')) {
+            const isHeader = node.parentElement.closest('th');
+            const isFirstColumn = node.parentElement.closest('td') && 
+                                 node.parentElement.closest('td').cellIndex === 0;
+            
+            if (!isHeader && !isFirstColumn) {
+              return NodeFilter.FILTER_REJECT;
+            }
           }
+
           // 跳过代码块
           if (node.parentElement.closest('code')) {
             return NodeFilter.FILTER_REJECT;
@@ -148,17 +192,26 @@ export class Translator {
       NodeFilter.SHOW_TEXT,
       {
         acceptNode: function(node) {
-          // 跳过表格内容，但允许表头
-          if (node.parentElement.closest('table') && 
-              !node.parentElement.closest('th')) {
-            return NodeFilter.FILTER_REJECT;
+          // 处理表格内容：只允许翻译表头和第一列
+          if (node.parentElement.closest('table')) {
+            const isHeader = node.parentElement.closest('th');
+            const isFirstColumn = node.parentElement.closest('td') && 
+                                 node.parentElement.closest('td').cellIndex === 0;
+            
+            if (!isHeader && !isFirstColumn) {
+              return NodeFilter.FILTER_REJECT;
+            }
           }
+
+          // 跳过代码块
           if (node.parentElement.closest('code')) {
             return NodeFilter.FILTER_REJECT;
           }
+          // 跳过链接地址
           if (node.parentElement.tagName === 'A' && node.textContent.includes('http')) {
             return NodeFilter.FILTER_REJECT;
           }
+          // 跳过空白文本
           if (!node.textContent.trim()) {
             return NodeFilter.FILTER_REJECT;
           }
