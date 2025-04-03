@@ -19,8 +19,8 @@
     /* 主要内容区域 */
     .main-content {
       flex: 1;           /* 占用剩余空间 */
-      margin-top: 48px;  /* 为顶部登录区域留出空间 */
-      margin-bottom: 60px;  /* 为底部 Contact Us 留出空间 */
+      margin-top: 12px;  /* 修改顶部边距 */
+      margin-bottom: 60px;
       overflow-y: auto;  /* 允许内容滚动 */
     }
 
@@ -198,21 +198,21 @@
     }
 
     /* 美化滚动条 */
-    .modification-log::-webkit-scrollbar {
-      width: 6px;
+    ::-webkit-scrollbar {
+      width: 8px;
     }
 
-    .modification-log::-webkit-scrollbar-track {
+    ::-webkit-scrollbar-track {
       background: #f1f1f1;
-      border-radius: 3px;
+      border-radius: 4px;
     }
 
-    .modification-log::-webkit-scrollbar-thumb {
+    ::-webkit-scrollbar-thumb {
       background: #ccc;
-      border-radius: 3px;
+      border-radius: 4px;
     }
 
-    .modification-log::-webkit-scrollbar-thumb:hover {
+    ::-webkit-scrollbar-thumb:hover {
       background: #999;
     }
 
@@ -433,6 +433,7 @@
     }
 
     .warning-header {
+      margin-top: 12px;  /* 添加顶部边距 */
       background: #fef2f2;
       border: 1px solid #fee2e2;
       border-radius: 8px;
@@ -514,66 +515,202 @@
 
     /* 登录区域样式 */
     .login-section {
-      position: absolute;
-      top: 0;
-      right: 0;
+      position: relative;
+      margin: 12px auto;
+      width: calc(100% - 24px);
+      background: #ffffff;
+      padding: 12px 16px;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
       display: flex;
+      justify-content: flex-end;
       align-items: center;
       gap: 8px;
-      padding: 8px 12px;
-      background: #fff;
-      border-bottom: 1px solid #eee;
-      width: 100%;
-      box-sizing: border-box;
-      justify-content: flex-end;
-      z-index: 1000;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
     }
 
-    /* 登录按钮样式 */
     .login-button {
-      background: transparent;
-      border: 1px solid #dc2626;
-      color: #dc2626;
-      padding: 1px 4px;
-      border-radius: 4px;
-      font-size: 12px;
+      background: #333538;
+      color: white;
+      padding: 6px 16px;
+      border: none;
+      border-radius: 3px;
       cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      min-width: 10px;
+      height: 32px;
       margin: 0;
-      width: auto;  /* 移除最小宽度，让按钮自适应文本宽度 */
-      white-space: nowrap;
+      transition: all 0.2s ease;
+      letter-spacing: 0.2px;
     }
 
     .login-button:hover {
-      background: rgba(220, 38, 38, 0.1);
+      background: #484b53;
+      transform: translateY(-1px);
     }
 
-    /* 用户信息样式 */
+    .login-button:active {
+      transform: translateY(0);
+    }
+
+    .login-button:disabled {
+      background: #e5e7eb;
+      color: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .user-info {
       display: none;
-      font-size: 12px;
-      color: #666;
-      white-space: nowrap;  /* 防止文本换行 */
-    }
-
-    .user-info.logged-in {
-      display: flex;
       align-items: center;
       gap: 8px;
+      background: #f8fafc;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+      height: 32px;
+    }
+
+    .user-info:hover {
+      border-color: #2563eb;
+      background: #f0f4fe;
+    }
+
+    .username {
+      font-size: 13px;
+      color: #475569;
+      font-weight: 500;
+      letter-spacing: 0.2px;
     }
 
     .logout-button {
       background: transparent;
-      border: none;
       color: #dc2626;
-      padding: 0;
-      font-size: 12px;
+      padding: 4px 12px;
+      border: 1px solid #fee2e2;
+      border-radius: 4px;
       cursor: pointer;
-      text-decoration: underline;
-      width: auto;
+      font-size: 12px;
+      font-weight: 500;
+      min-width: 60px;
+      height: 24px;
+      margin: 0;
+      transition: all 0.15s ease;
     }
 
     .logout-button:hover {
-      opacity: 0.8;
+      background: #dc2626;
+      color: white;
+      border-color: #dc2626;
+    }
+
+    .logout-button:active {
+      transform: scale(0.96);
+    }
+
+    /* 钱包选择弹窗样式 */
+    .wallet-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      padding-bottom: 15vh; /* 向上偏移整体高度的15% */
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 24px;
+      border-radius: 12px;
+      width: 85%;
+      max-width: 300px;
+      position: relative;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0 0 20px 0;
+      text-align: center;
+      letter-spacing: 0.2px;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #64748b;
+      cursor: pointer;
+      padding: 4px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.15s ease;
+    }
+
+    .close-modal:hover {
+      background-color: #f1f5f9;
+      color: #475569;
+    }
+
+    .wallet-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .wallet-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background: #ffffff;
+      height: 48px;
+    }
+
+    .wallet-option:hover {
+      border-color: #2563eb;
+      background-color: #f8fafc;
+      transform: translateY(-1px);
+    }
+
+    .wallet-option:active {
+      transform: translateY(0);
+    }
+
+    .wallet-icon {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+
+    .wallet-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #334155;
+      letter-spacing: 0.2px;
     }
 
     .loading-section {
@@ -850,6 +987,206 @@
     .lang-switch:hover::before {
       opacity: 0.7;
     }
+
+    .wallet-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .wallet-modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .wallet-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .wallet-modal-header h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .wallet-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .wallet-option {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .wallet-option:hover {
+      background: #f5f5f5;
+      border-color: #ddd;
+    }
+
+    .wallet-icon {
+      width: 32px;
+      height: 32px;
+      margin-right: 12px;
+    }
+
+    .wallet-option span {
+      font-size: 16px;
+      color: #333;
+    }
+
+    /* 会员状态样式 */
+    .membership-section {
+      margin: 0px 0px;
+      font-size: 13px;
+    }
+
+    .membership-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      padding: 8px 12px;
+      transition: all 0.2s ease;
+    }
+
+    .membership-status:hover {
+      border-color: #cbd5e1;
+      background: #f1f5f9;
+    }
+
+    .status-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-value {
+      font-weight: 500;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+      color: #64748b;
+      position: relative;
+      padding-left: 18px;
+      width: 100px;
+    }
+
+    .status-value::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #94a3b8;
+    }
+
+    .status-value.member {
+      color: #059669;
+    }
+
+    .status-value.member::before {
+      background: #10b981;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+    }
+
+    .status-value.non-member {
+      color: #64748b;
+    }
+
+    .status-value.non-member::before {
+      background: #94a3b8;
+      box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.1);
+    }
+
+    .refresh-button {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+
+    .refresh-button:hover {
+      color: #64748b;
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .refresh-button.loading svg {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .purchase-link {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: #eff6ff;
+      transition: all 0.2s;
+      height: 24px;
+    }
+
+    .purchase-link:hover {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .purchase-link svg {
+      transition: transform 0.2s;
+    }
+
+    .purchase-link:hover svg {
+      transform: translate(1px, -1px);
+    }
   </style>
 </head>
 <body>
@@ -857,10 +1194,52 @@
     <button class="lang-switch" id="langSwitch">English</button>
     <div class="user-info">
       <span class="username"></span>
-      <button class="logout-button">退出</button>
+      <button class="logout-button">disconnect</button>
     </div>
-    <button class="login-button">登录</button>
+    <button class="login-button">connect wallet</button>
+
+    <!-- 钱包选择弹窗 -->
+    <div class="wallet-modal" style="display: none;">
+      <div class="wallet-modal-content">
+        <div class="wallet-modal-header">
+          <h3>选择钱包</h3>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="wallet-options">
+          <button class="wallet-option" data-wallet="okx">
+            <img src="./src/okx.svg" alt="OKX Wallet" class="wallet-icon" id="okx-icon">
+            <span>OKX</span>
+          </button>
+          <button class="wallet-option" data-wallet="phantom">
+            <img src="./src/phantom.svg" alt="Phantom" class="wallet-icon" id="phantom-icon">
+            <span>Phantom</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
+
+
+  <div id="wallet-membership" class="membership-section">
+    <div class="membership-status">
+      <div class="status-info">
+        <span class="status-value" id="membershipStatus">非会员</span>
+        <div class="refresh-button" id="refreshMembership" title="刷新会员状态">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20.453 12.893C19.604 16.9 16.056 19.8 12 19.8C7.244 19.8 3.4 15.956 3.4 11.2C3.4 6.444 7.244 2.6 12 2.6C15.087 2.6 17.804 4.158 19.35 6.489" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M20.6 2V7.4H15.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <a href="https://pumptools.me/pay" target="_blank" class="purchase-link" id="purchaseLink">
+        <span>购买会员</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
   <div class="main-content">
     <div class="warning-header">
       <h3>注意：</h3>
@@ -889,7 +1268,7 @@
     <h3>Contact Us</h3>
     <div class="contact-links">
       <a href="https://pumptools.me" target="_blank" class="contact-link">
-        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a73e8'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/%3E%3C/svg%3E" alt="Website">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a73e8'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/%3E%3C/svg%3E" alt="Website">
         官网
       </a>
       <a href="https://t.me/pumptools_me" target="_blank" class="contact-link">
@@ -909,5 +1288,7 @@
   <script src="analyzers/gmgn-analyzer.js"></script>
   <script src="analyzer-registry.js"></script>
   <script src="auth.js"></script>
+  <script src="wallet-connector.js"></script>
+  <script src="membership.js"></script>
 </body>
-</html> 
+</html>
