@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "GMGN Analyzer",
+  "name": "GMGN & DexScreener Analyzer",
   "version": "1.0",
-  "description": "让您的GMGN更上一层楼",
+  "description": "Protecting the chives is a duty we cannot shirk.",
   "permissions": [
     "activeTab",
     "scripting",
@@ -19,6 +19,7 @@
   },
   "host_permissions": [
     "https://*.gmgn.ai/*",
+    "https://*.dexscreener.com/*",
     "<all_urls>",
     "*://*.okx.com/*"
   ],
