@@ -257,10 +257,19 @@ class ContractRules {
       ? '<th>修改类型</th><th>修改内容</th><th>修改时间</th>'
       : '<th>链</th><th>代币符号</th><th>合约地址</th><th>市值</th>';
 
-    // 只在创建者发币历史的标题后添加说明
     const titleWithNote = title === '创建者发币历史' 
       ? `${title}（最多获取最近10条记录）` 
       : title;
+
+    // 根据类型获取正确的数据长度
+    let dataLength;
+    if (isModification) {
+      dataLength = this.currentModificationData?.length || 0;
+    } else if (title === '创建者发币历史') {
+      dataLength = this.currentCreatorData?.length || 0;
+    } else {
+      dataLength = this.currentData?.length || 0;
+    }
 
     return `
       <div class="section-card">
@@ -268,7 +277,7 @@ class ContractRules {
         <div class="stats-grid warning-bg">
           ${statsHtml}
         </div>
-        <div class="table-container" data-total-items="${this.currentData?.length || 0}" data-page-size="${isModification ? 3 : 5}" data-type="${isModification ? 'modifications' : 'tokens'}">
+        <div class="table-container" data-total-items="${dataLength}" data-page-size="${isModification ? 3 : 5}" data-type="${isModification ? 'modifications' : title === '创建者发币历史' ? 'creator' : 'tokens'}">
           <table class="${isModification ? 'modifications-table' : 'tokens-table'}">
             <thead>
               <tr>${tableHeaders}</tr>
@@ -352,9 +361,15 @@ class ContractRules {
   static changePage(button, direction) {
     const container = button.closest('.table-container');
     const type = container.dataset.type || 'tokens';  // 默认为tokens类型
-    const data = type === 'modifications' ? this.currentModificationData : 
-                 type === 'creator' ? this.currentCreatorData :
-                 this.currentData;
+    // 根据类型获取正确的数据源
+    let data;
+    if (type === 'modifications') {
+      data = this.currentModificationData;
+    } else if (type === 'creator') {
+      data = this.currentCreatorData;
+    } else if (type === 'tokens') {
+      data = this.currentData;
+    }
 
     if (!data) return;
 
@@ -364,7 +379,7 @@ class ContractRules {
     const nextBtn = container.querySelector('.next-btn');
     
     const totalItems = parseInt(container.dataset.totalItems);
-    const pageSize = parseInt(container.dataset.pageSize);  // 从 data 属性获取页面大小
+    const pageSize = parseInt(container.dataset.pageSize);
     const totalPages = Math.ceil(totalItems / pageSize);
     const currentPage = parseInt(currentPageSpan.textContent);
     
@@ -380,6 +395,12 @@ class ContractRules {
     // 获取新页面的数据
     const start = (newPage - 1) * pageSize;
     const end = Math.min(start + pageSize, totalItems);
+
+    // 确保数据存在且长度正确
+    if (!data || start >= data.length) {
+      console.error('数据不存在或页码超出范围');
+      return;
+    }
 
     // 根据表格类型生成不同的行内容
     let newRows;

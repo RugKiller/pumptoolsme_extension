@@ -1,6 +1,5 @@
 export class Translator {
   static currentLang = 'zh';
-  static translationCache = new Map();
 
   // 批处理相关配置
   static BATCH_SIZE = 20;  // 每批处理的最大文本数量
@@ -8,29 +7,39 @@ export class Translator {
   static pendingBatch = [];
   static batchPromise = null;
 
-  // 缓存相关方法
-  static getFromCache(text, targetLang) {
-    const cacheKey = `${text}:${targetLang}`;
-    return this.translationCache.get(cacheKey);
+  static async translate(text, targetLang = 'en') {
+    try {
+      if (!text || !text.trim()) {
+        return text;
+      }
+
+      // 将翻译请求添加到批处理队列
+      return new Promise((resolve) => {
+        this.pendingBatch.push({ text, resolve });
+        
+        if (!this.batchPromise) {
+          this.batchPromise = setTimeout(async () => {
+            this.batchPromise = null;
+            await this.processBatch();
+          }, this.BATCH_DELAY);
+        }
+      });
+    } catch (error) {
+      console.error('Translation failed:', error);
+      return text;
+    }
   }
 
-  static setToCache(text, targetLang, translation) {
-    const cacheKey = `${text}:${targetLang}`;
-    this.translationCache.set(cacheKey, translation);
-  }
-
-  // 批量翻译方法
   static async translateBatch(texts, targetLang) {
     if (texts.length === 0) return [];
     
     try {
-      const combinedText = texts.join('\n||||\n');  // 使用特殊分隔符
+      const combinedText = texts.join('\n||||\n');
       const response = await fetch(
         `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(combinedText)}`
       );
       const data = await response.json();
       
-      // 解析返回的翻译结果
       const translations = [];
       let currentIndex = 0;
       
@@ -39,21 +48,13 @@ export class Translator {
         currentIndex++;
       }
 
-      // 缓存结果
-      texts.forEach((text, index) => {
-        if (translations[index]) {
-          this.setToCache(text, targetLang, translations[index]);
-        }
-      });
-
       return translations;
     } catch (error) {
       console.error('Batch translation failed:', error);
-      return texts;  // 出错时返回原文
+      return texts;
     }
   }
 
-  // 处理批量翻译队列
   static async processBatch() {
     if (this.pendingBatch.length === 0) return;
     
@@ -72,43 +73,8 @@ export class Translator {
     });
   }
 
-  static async translate(text, targetLang = 'en') {
-    try {
-      // 如果文本为空或只包含空格，直接返回
-      if (!text || !text.trim()) {
-        return text;
-      }
-
-      // 检查缓存
-      const cachedTranslation = this.getFromCache(text, targetLang);
-      if (cachedTranslation) {
-        return cachedTranslation;
-      }
-
-      // 将翻译请求添加到批处理队列
-      return new Promise((resolve) => {
-        this.pendingBatch.push({ text, resolve });
-        
-        // 如果没有正在处理的批次，启动新的批处理
-        if (!this.batchPromise) {
-          this.batchPromise = setTimeout(async () => {
-            this.batchPromise = null;
-            await this.processBatch();
-          }, this.BATCH_DELAY);
-        }
-      });
-    } catch (error) {
-      console.error('Translation failed:', error);
-      return text;
-    }
-  }
-
   static async translatePage(lang) {
     this.currentLang = lang;
-    // 如果切换回中文，清除缓存以节省内存
-    if (lang === 'zh') {
-      this.translationCache.clear();
-    }
 
     // 获取所有需要翻译的文本节点
     const walker = document.createTreeWalker(
