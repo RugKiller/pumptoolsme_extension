@@ -1,4 +1,4 @@
-class GMGNAnalyzer {
+class GMGNAnalyzer extends BaseAnalyzer {
   static siteConfigs = {
     'gmgn.ai': [
       {
@@ -13,12 +13,11 @@ class GMGNAnalyzer {
         name: '合约创建者',
         process: (href) => {
           try {
-            // 从路径中提取链类型和地址
             const match = href.match(/\/([^/]+)\/address\/([^/?]+)/);
             if (match && match[1] && match[2]) {
-              const chain = match[1];    // 链类型 (sol, eth 等)
-              const address = match[2];   // 地址
-              return `${chain}:${address}`;  // 返回 chain:address 格式
+              const chain = match[1];
+              const address = match[2];
+              return `${chain}:${address}`;
             }
             return '未找到创建者地址';
           } catch (error) {
@@ -36,8 +35,10 @@ class GMGNAnalyzer {
             let username;
             href = href.replace(/^@/, '');
             
-            const match = href.match(/(?:twitter|x)\.com\/([^/?]+)/);
+            // 匹配 twitter.com/username 或 x.com/username，忽略后面的 status 等内容
+            const match = href.match(/(?:twitter|x)\.com\/([^/]+)/);
             if (match && match[1]) {
+              username = match[1].split('/')[0];
               username = decodeURIComponent(match[1]);
               if (['search', 'home', 'explore', 'notifications'].includes(username)) {
                 return '未找到推特账号';
@@ -60,13 +61,6 @@ class GMGNAnalyzer {
     ]
   };
 
-  // 添加日志方法
-  static log(message, data = null) {
-    const timestamp = new Date().toISOString();
-    console.log(`[${timestamp}] GMGNAnalyzer: ${message}`, data || '');
-  }
-
-  // 分析URL是否为GMGN网站
   static analyzeURL(url) {
     this.log('开始分析URL:', url);
     try {
@@ -88,7 +82,6 @@ class GMGNAnalyzer {
     }
   }
 
-  // 从页面获取指定信息
   static async extractPageInfo(tab) {
     this.log('开始提取页面信息, tabId:', tab.id);
     try {
@@ -225,6 +218,45 @@ class GMGNAnalyzer {
     }
   }
 
+  static async getPageData() {
+    const url = window.location.href;
+    const data = {
+      contract: { value: null, chain: null },
+      twitter: { value: null }
+    };
+
+    try {
+      // 解析URL获取合约信息
+      const urlParts = url.split('/');
+      const gmgnIndex = urlParts.findIndex(part => part === 'gmgn.ai');
+      
+      if (gmgnIndex !== -1 && urlParts.length > gmgnIndex + 3) {
+        const chain = urlParts[gmgnIndex + 1];  // 获取链信息 (sol, eth 等)
+        const address = urlParts[gmgnIndex + 3];  // 获取合约地址
+        
+        if (chain && address) {
+          data.contract = {
+            value: address,
+            chain: chain
+          };
+          console.log('解析到合约信息:', data.contract);
+        }
+      }
+
+      // 获取推特信息
+      const twitterElement = document.querySelector('a[href^="https://twitter.com/"], a[href^="https://x.com/"]');
+      if (twitterElement) {
+        data.twitter.value = twitterElement.href;
+      }
+
+    } catch (error) {
+      console.error('获取页面数据失败:', error);
+    }
+
+    console.log('页面数据:', data);
+    return data;
+  }
+
   static updateUI(result, elementId = 'result') {
     this.log('开始更新UI:', result);
     const resultDiv = document.getElementById(elementId);
@@ -245,7 +277,7 @@ class GMGNAnalyzer {
     };
 
     // 检查基本错误情况
-    if (!result.success || !result.isGMGN || !result.pageInfo || !result.pageInfo.success) {
+    if (!result.success || !result.pageInfo || !result.pageInfo.success) {
       this.log('显示错误信息:', result.error);
       showError();
       return;
@@ -294,14 +326,13 @@ class GMGNAnalyzer {
           </div>
         `;
       } else {
-        html += GMGNRules.getResultHTML(result.pageInfo.analysis);
+        html += ContractRules.getResultHTML(result.pageInfo.analysis);
       }
     }
 
     resultDiv.innerHTML = html;
   }
 
-  // 新增方法来格式化合约信息
   static formatContractInfo(info) {
     const formatTwitterValue = (value) => {
       if (value && value.startsWith('https://')) {
@@ -339,46 +370,6 @@ class GMGNAnalyzer {
         </div>
       `).join('');
   }
-
-  static async getPageData() {
-    const url = window.location.href;
-    const data = {
-      contract: { value: null, chain: null },
-      twitter: { value: null }
-    };
-
-    try {
-      // 解析URL获取合约信息
-      const urlParts = url.split('/');
-      const gmgnIndex = urlParts.findIndex(part => part === 'gmgn.ai');
-      
-      if (gmgnIndex !== -1 && urlParts.length > gmgnIndex + 3) {
-        const chain = urlParts[gmgnIndex + 1];  // 获取链信息 (sol, eth 等)
-        const address = urlParts[gmgnIndex + 3];  // 获取合约地址
-        
-        if (chain && address) {
-          data.contract = {
-            value: address,
-            chain: chain
-          };
-          console.log('解析到合约信息:', data.contract);
-        }
-      }
-
-      // 获取推特信息
-      const twitterElement = document.querySelector('a[href^="https://twitter.com/"], a[href^="https://x.com/"]');
-      if (twitterElement) {
-        data.twitter.value = twitterElement.href;
-      }
-
-    } catch (error) {
-      console.error('获取页面数据失败:', error);
-    }
-
-    console.log('页面数据:', data);
-    return data;
-  }
 }
 
-// 导出分析器类
-window.GMGNAnalyzer = GMGNAnalyzer;
+window.GMGNAnalyzer = GMGNAnalyzer; 
