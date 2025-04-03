@@ -2,23 +2,26 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <script type="module" src="sidepanel.js"></script>
   <style>
     body {
       width: 360px;
-      padding: 12px;
+      padding: 12px 12px 0 12px;  /* 移除底部内边距 */
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       margin: 0;
       min-height: 100vh;  /* 确保body至少有视口高度 */
       display: flex;      /* 使用flex布局 */
       flex-direction: column;  /* 垂直方向排列 */
       overflow-x: hidden;  /* 禁止水平滚动 */
+      position: relative;  /* 为固定定位的子元素提供参考 */
     }
 
     /* 主要内容区域 */
     .main-content {
       flex: 1;           /* 占用剩余空间 */
-      margin-bottom: 20px;  /* 与底部Contact Us的间距 */
-      margin-top: 48px;  /* 减小上边距，为Contact Us留出空间 */
+      margin-top: 48px;  /* 为顶部登录区域留出空间 */
+      margin-bottom: 60px;  /* 为底部 Contact Us 留出空间 */
+      overflow-y: auto;  /* 允许内容滚动 */
     }
 
     button {
@@ -454,15 +457,26 @@
       margin-left: 16px;
     }
 
+    /* Contact Us 区域样式 */
     .contact-us {
-      position: absolute;
-      top: 8px;
-      left: 12px;
-      z-index: 1001;
+      position: fixed;  /* 固定定位 */
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px;
+      border-top: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: #fff;  /* 确保背景是白色 */
+      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);  /* 添加顶部阴影 */
     }
 
     .contact-us h3 {
-      display: none;
+      font-size: 13px;
+      color: #666;
+      margin: 0;
     }
 
     .contact-links {
@@ -498,42 +512,47 @@
       opacity: 1;
     }
 
+    /* 登录区域样式 */
     .login-section {
       position: absolute;
-      top: 0;           /* 改为0 */
-      right: 0;         /* 改为0 */
+      top: 0;
+      right: 0;
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 12px;  /* 添加内边距 */
-      background: #fff;   /* 添加背景色 */
-      border-bottom: 1px solid #eee;  /* 添加底部边框 */
-      width: 100%;       /* 占满宽度 */
-      box-sizing: border-box;  /* 确保padding不会增加总宽度 */
-      justify-content: flex-end;  /* 将内容靠右对齐 */
-      z-index: 1000;     /* 确保在最上层 */
+      padding: 8px 12px;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      width: 100%;
+      box-sizing: border-box;
+      justify-content: flex-end;
+      z-index: 1000;
     }
 
+    /* 登录按钮样式 */
     .login-button {
       background: transparent;
       border: 1px solid #dc2626;
       color: #dc2626;
-      padding: 4px 12px;
+      padding: 1px 4px;
       border-radius: 4px;
       font-size: 12px;
       cursor: pointer;
       margin: 0;
-      width: auto;
+      width: auto;  /* 移除最小宽度，让按钮自适应文本宽度 */
+      white-space: nowrap;
     }
 
     .login-button:hover {
       background: rgba(220, 38, 38, 0.1);
     }
 
+    /* 用户信息样式 */
     .user-info {
-      display: none;  /* 默认隐藏 */
+      display: none;
       font-size: 12px;
       color: #666;
+      white-space: nowrap;  /* 防止文本换行 */
     }
 
     .user-info.logged-in {
@@ -799,10 +818,43 @@
     .tokens-table tr.current-contract td .contract-link {
       color: #0d47a1;  /* 使用深蓝色以在黄色背景上更清晰 */
     }
+
+    /* 语言切换按钮样式 */
+    .lang-switch {
+      font-size: 12px;
+      color: #666;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 2px 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 移除所有hover效果 */
+    .lang-switch:hover {
+      color: #666;
+      background: transparent;
+    }
+
+    .lang-switch::before {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"%3E%3Cpath d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"%3E%3C/path%3E%3C/svg%3E');
+      opacity: 0.7;
+    }
+
+    .lang-switch:hover::before {
+      opacity: 0.7;
+    }
   </style>
 </head>
 <body>
   <div class="login-section">
+    <button class="lang-switch" id="langSwitch">English</button>
     <div class="user-info">
       <span class="username"></span>
       <button class="logout-button">退出</button>
@@ -857,6 +909,5 @@
   <script src="analyzers/gmgn-analyzer.js"></script>
   <script src="analyzer-registry.js"></script>
   <script src="auth.js"></script>
-  <script src="sidepanel.js"></script>
 </body>
 </html> 
