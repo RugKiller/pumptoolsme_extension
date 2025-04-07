@@ -18,7 +18,7 @@ class ContractRules {
   // API 基础配置
   static API_CONFIG = {
     PUMP_TOOLS: {
-      BASE_URL: 'http://pumptools.me:8088/api/extension',
+      BASE_URL: 'https://pumptools.me/api/extension',
       ENDPOINTS: {
         TWITTER_TOKENS: '/get_x_tokens_history',  // 推特账号发币历史
         TWITTER_MODIFICATIONS: '/get_x_modification_logs',  // 推特账号异常修改历史
@@ -72,7 +72,7 @@ class ContractRules {
   static formatMarketCap(value) {
     const num = parseFloat(value);
     if (isNaN(num)) return '-';
-    return num >= 1000 
+    return num >= 1000
       ? `$${(num/1000).toFixed(2)}K`
       : `$${num.toFixed(2)}`;
   }
@@ -91,7 +91,7 @@ class ContractRules {
   // 通用统计信息生成
   static generateStatsHtml(data, type) {
     const totalItems = data.length;
-    const highValueCount = type !== 'modifications' 
+    const highValueCount = type !== 'modifications'
       ? data.filter(token => parseFloat(token.market_cap) > 10000).length
       : null;
 
@@ -152,7 +152,7 @@ class ContractRules {
     } else if (chain === 'BNB Chain') {
       return `<a href="https://gmgn.ai/bsc/token/${address}" target="_blank" class="contract-link">${address}</a>`;
     }
-    
+
     // 其他链只显示地址，不生成链接
     return address;
   }
@@ -179,9 +179,9 @@ class ContractRules {
       `).join('');
     } else {
       tableRows = data.slice(0, pageSize).map(token => {
-        const isCurrentContract = this.currentContractAddress && 
+        const isCurrentContract = this.currentContractAddress &&
           token.token_address.toLowerCase() === this.currentContractAddress;
-        
+
         return `
           <tr ${isCurrentContract ? 'class="current-contract"' : ''}>
             <td>${token.chain_name}</td>
@@ -236,8 +236,8 @@ class ContractRules {
   // 辅助方法
   static formatEmptyData(title) {
     // 只在创建者发币历史的标题后添加说明
-    const titleWithNote = title === '创建者发币历史' 
-      ? `${title}（最多获取最近10条记录）` 
+    const titleWithNote = title === '创建者发币历史'
+      ? `${title}（最多获取最近10条记录）`
       : title;
 
     return `
@@ -253,12 +253,12 @@ class ContractRules {
   }
 
   static generateSectionHtml(title, statsHtml, tableRows, paginationHtml, isModification = false) {
-    const tableHeaders = isModification 
+    const tableHeaders = isModification
       ? '<th>修改类型</th><th>修改内容</th><th>修改时间</th>'
       : '<th>链</th><th>代币符号</th><th>合约地址</th><th>市值</th>';
 
-    const titleWithNote = title === '创建者发币历史' 
-      ? `${title}（最多获取最近10条记录）` 
+    const titleWithNote = title === '创建者发币历史'
+      ? `${title}（最多获取最近10条记录）`
       : title;
 
     // 根据类型获取正确的数据长度
@@ -316,7 +316,7 @@ class ContractRules {
   static async fetchCreatorTokens(chain, address) {
     return this.makeRequest(
       this.API_CONFIG.PUMP_TOOLS.ENDPOINTS.CREATOR_TOKENS,
-      { 
+      {
         chain: chain,
         token_address: address  // 使用合约地址
       },
@@ -377,21 +377,21 @@ class ContractRules {
     const currentPageSpan = container.querySelector('.current-page');
     const prevBtn = container.querySelector('.prev-btn');
     const nextBtn = container.querySelector('.next-btn');
-    
+
     const totalItems = parseInt(container.dataset.totalItems);
     const pageSize = parseInt(container.dataset.pageSize);
     const totalPages = Math.ceil(totalItems / pageSize);
     const currentPage = parseInt(currentPageSpan.textContent);
-    
+
     let newPage = direction === 'next' ? currentPage + 1 : currentPage - 1;
-    
+
     // 更新页码
     currentPageSpan.textContent = newPage;
-    
+
     // 更新按钮状态
     prevBtn.disabled = newPage === 1;
     nextBtn.disabled = newPage === totalPages;
-    
+
     // 获取新页面的数据
     const start = (newPage - 1) * pageSize;
     const end = Math.min(start + pageSize, totalItems);
@@ -435,9 +435,9 @@ class ContractRules {
       }).join('');
     } else {
       newRows = data.slice(start, end).map(token => {
-        const isCurrentContract = this.currentContractAddress && 
+        const isCurrentContract = this.currentContractAddress &&
           token.token_address.toLowerCase() === this.currentContractAddress;
-        
+
         return `
           <tr ${isCurrentContract ? 'class="current-contract"' : ''}>
             <td>${token.chain_name}</td>
@@ -448,7 +448,7 @@ class ContractRules {
         `;
       }).join('');
     }
-    
+
     tbody.innerHTML = newRows;
   }
 
@@ -473,7 +473,7 @@ class ContractRules {
     try {
       // 准备所有需要执行的规则检查
       const ruleChecks = [];
-      
+
       // 只有在有推特账号时才执行推特相关的检查
       if (pageData.twitter?.value) {
         // 推特发币历史检查
@@ -641,7 +641,7 @@ class ContractRules {
   // 修改 getResultHTML 方法
   static getResultHTML(analysisResults) {
     let html = '<div class="analysis-results">';
-    
+
     // 添加汇总信息
     html += this.formatSummaryData(analysisResults);
 
@@ -669,7 +669,7 @@ class ContractRules {
     setTimeout(() => {
       this.setupPaginationListeners();
     }, 0);
-    
+
     return html;
   }
 }
