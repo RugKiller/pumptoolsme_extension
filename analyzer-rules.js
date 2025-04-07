@@ -49,9 +49,13 @@ class ContractRules {
       const url = `${this.API_CONFIG.PUMP_TOOLS.BASE_URL}${endpoint}`;
       console.log(`准备发送${description}请求:`, url, payload);
 
+      const storage = await chrome.storage.local.get(['walletAddress', 'token']);
+      const { walletAddress, token } = storage;
+      payload.user_id = walletAddress;
+
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(payload)
       });
 
