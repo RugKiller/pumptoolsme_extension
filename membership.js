@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
             });
 
+
+
             console.log("Backend response status:", response.status);
 
             const data = await response.json();
@@ -31,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.token) {
                 // 保存 token 到 chrome.storage
                 await chrome.storage.local.set({ token: data.token });
+                console.log(' ---> Received token:', data.token);
 
                 // 保存会员过期时间
                 if (data.data && data.data.member_expire_time) {
