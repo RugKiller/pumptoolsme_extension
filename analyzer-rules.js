@@ -59,16 +59,29 @@ class ContractRules {
         body: JSON.stringify(payload)
       });
 
+      // 如果是 401 或 403，抛出特定错误
+      if (response.status === 401 || response.status === 403) {
+        const error = new Error('NeedVip');
+        error.status = response.status;
+        error.emptyData = { data: [] };  // 添加空数据
+        throw error;
+      }
+
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        // 其他错误返回空数据
+        return { data: [] };
       }
 
       const result = await response.json();
       console.log(`${description}响应数据:`, result);
       return result;
     } catch (error) {
-      console.error(`${description}失败:`, error);
-      throw error;
+      console.warn(`${description}失败:`, error);
+      if (error.message === 'NeedVip') {
+        throw error;  // 继续抛出 NeedVip 错误
+      }
+      // 其他错误返回空数据
+      return { data: [] };
     }
   }
 
@@ -541,6 +554,9 @@ class ContractRules {
       }
 
     } catch (error) {
+      if (error.name === 'NeedVip') {
+        throw error;  // 继续向上抛出错误
+      }
       console.error('规则执行过程中发生错误:', error);
       // 处理整体执行过程中的错误
       for (const [ruleId, rule] of Object.entries(this.rules)) {
@@ -582,9 +598,10 @@ class ContractRules {
   // 添加汇总信息格式化方法
   static formatSummaryData(analysisResults) {
     // 从三个接口的数据中提取信息
-    const creatorData = this.currentCreatorData || [];
-    const twitterData = this.currentData || [];
-    const modificationData = this.currentModificationData || [];
+    // 确保数据是数组
+    const creatorData = Array.isArray(this.currentCreatorData) ? this.currentCreatorData : [];
+    const twitterData = Array.isArray(this.currentData) ? this.currentData : [];
+    const modificationData = Array.isArray(this.currentModificationData) ? this.currentModificationData : [];
 
     // 计算汇总统计
     const totalCreatorTokens = creatorData.length;

@@ -433,7 +433,7 @@
     }
 
     .warning-header {
-      margin-top: 12px;
+      margin-top: 0;  /* 移除顶部外边距 */
       background: #fef2f2;
       border: 1px solid #fee2e2;
       border-radius: 8px;
@@ -536,11 +536,10 @@
 
     /* 登录区域样式 */
     .login-section {
-      position: relative;
-      margin: 12px auto;
-      width: calc(100% - 24px);
+      margin: 4px auto;
+      padding: 6px 12px;  /* 减小上下内边距 */
+      width: calc(100% - 16px);
       background: #ffffff;
-      padding: 12px 16px;
       z-index: 100;
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
       display: flex;
@@ -555,13 +554,13 @@
       background: #333538;
       color: white;
       padding: 6px 16px;
+      height: 24px;  /* 减小按钮高度 */
       border: none;
       border-radius: 3px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;  /* 稍微减小字体大小 */
       font-weight: 500;
       min-width: 10px;
-      height: 32px;
       margin: 0;
       transition: all 0.2s ease;
       letter-spacing: 0.2px;
@@ -583,6 +582,7 @@
       transform: none;
     }
 
+    /* 用户信息区域样式 */
     .user-info {
       display: none;
       align-items: center;
@@ -592,7 +592,7 @@
       border-radius: 6px;
       border: 1px solid #e2e8f0;
       transition: all 0.2s ease;
-      height: 32px;
+      height: 24px;  /* 减小高度以匹配按钮 */
     }
 
     .user-info:hover {
@@ -1086,16 +1086,16 @@
       color: #333;
     }
 
-    /* 会员状态样式 */
+    /* 会员状态区域样式 */
     .membership-section {
-      margin: 0px 0px;
+      margin: 4px 0px 8px 0px;  /* 只修改底部外边距为8px */
       font-size: 13px;
     }
 
     .membership-status {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;  /* 改为左对齐 */
       background: #f8fafc;
       padding: 8px 12px;
       transition: all 0.2s ease;
@@ -1109,6 +1109,7 @@
     .status-info {
       display: flex;
       align-items: center;
+      flex: 1;  /* 让状态信息占据剩余空间 */
       gap: 8px;
     }
 
@@ -1119,7 +1120,6 @@
       color: #64748b;
       position: relative;
       padding-left: 18px;
-      width: 100px;
     }
 
     .status-value::before {
@@ -1187,13 +1187,13 @@
       gap: 4px;
       color: #2563eb;
       text-decoration: none;
-      font-size: 13px;
+      font-size: 12px;  /* 减小字体大小 */
       font-weight: 500;
       padding: 4px 8px;
       border-radius: 4px;
       background: #eff6ff;
       transition: all 0.2s;
-      height: 24px;
+      height: 20px;  /* 减小高度 */
     }
 
     .purchase-link:hover {
@@ -1246,6 +1246,48 @@
     .warning-header li.no-bullet {
       list-style-type: none;
       margin-left: 0;
+    }
+
+    /* 调整头部区域样式 */
+    .header-section {
+      padding: 8px 12px;  /* 减小内边距 */
+      margin-bottom: 8px;  /* 减小底部间距 */
+    }
+
+    /* 调整语言切换和钱包地址区域 */
+    .language-wallet-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;  /* 减小底部间距 */
+    }
+
+    /* 调整有效期显示 */
+    .expiry-section {
+      margin-top: 4px;  /* 减小顶部间距 */
+      font-size: 13px;  /* 稍微减小字体大小 */
+    }
+
+    /* 调整钱包地址区域 */
+    .wallet-section {
+      padding: 6px 10px;  /* 减小内边距 */
+      font-size: 13px;
+    }
+
+    /* 添加 VIP 提醒样式 */
+    .vip-warning {
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #dc2626;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
   </style>
 </head>
@@ -1305,7 +1347,7 @@
       <h3>注意：</h3>
       <li class="no-bullet">
         <a href="https://x.com/pumptools_me" target="_blank" class="highlight-text" style="text-decoration: none; display: block; cursor: pointer;">
-          关注我们的推特，联系我们可以领取7日免费资格，先到先得，资格有限！
+          关注我们的推特，联系我们可以领取3日免费资格，先到先得，名额有限！
         </a>
       </li>
       <li>当前只专注于分析合约的创建者以及绑定推特的分析！</li>
