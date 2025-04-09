@@ -177,7 +177,7 @@ class ContractRules {
       tableRows = data.slice(0, pageSize).map(item => `
         <tr>
           <td>${this.TYPE_LABELS[item.modify_type] || item.modify_type}</td>
-          <td class="modification-content">${item.modification_log.replace(/\n/g, '<br>')}</td>
+          <td style="width: 65%; word-break: break-all; white-space: pre-wrap;" class="modification-content">${item.modification_log.replace(/\n/g, '<br>')}</td>
           <td>${item.gmt_modify}</td>
         </tr>
       `).join('');
@@ -258,7 +258,7 @@ class ContractRules {
 
   static generateSectionHtml(title, statsHtml, tableRows, paginationHtml, isModification = false) {
     const tableHeaders = isModification
-      ? '<th>修改类型</th><th>修改内容</th><th>修改时间</th>'
+      ? '<th>修改类型</th><th>修改内容</th><th style="min-width: 150px">修改时间</th>'
       : '<th>链</th><th>代币符号</th><th>合约地址</th><th>市值</th>';
 
     const titleWithNote = title === '创建者发币历史'
@@ -281,8 +281,8 @@ class ContractRules {
         <div class="stats-grid warning-bg">
           ${statsHtml}
         </div>
-        <div class="table-container" data-total-items="${dataLength}" data-page-size="${isModification ? 3 : 5}" data-type="${isModification ? 'modifications' : title === '创建者发币历史' ? 'creator' : 'tokens'}">
-          <table class="${isModification ? 'modifications-table' : 'tokens-table'}">
+        <div class="table-container" data-total-items="${dataLength}" data-page-size="5" data-type="${title === '推特异常修改历史' ? 'modifications' : title === '创建者发币历史' ? 'creator' : 'tokens'}">
+          <table class="${isModification ? 'modifications-table' : 'tokens-table'}" style="${isModification ? 'table-layout: fixed; width: 100%;' : ''}">
             <thead>
               <tr>${tableHeaders}</tr>
             </thead>
@@ -410,30 +410,13 @@ class ContractRules {
     let newRows;
     if (type === 'modifications') {
       newRows = data.slice(start, end).map(item => {
-        const typeLabel = {
-          'modify_description': '修改简介',
-          'delete_tweet': '删除推文',
-          'modify_name': '修改名称',
-          'modify_profile': '修改头像'
-        }[item.modify_type] || item.modify_type;
-
-        // 使用相同的内容处理逻辑
-        let modificationContent = item.modification_log;
-        if (item.modify_type === 'modify_description') {
-          modificationContent = modificationContent
-            .replace('Raw Value:</br>', '')
-            .replace(/\n/g, '<br>');
-        } else if (item.modify_type === 'delete_tweet') {
-          modificationContent = modificationContent
-            .replace('Delete Tweet:</br>', '')
-            .replace(/\n/g, '<br>');
-        }
+        const typeLabel = this.TYPE_LABELS[item.modify_type] || item.modify_type;
 
         return `
           <tr>
-            <td>${typeLabel}</td>
-            <td class="modification-content">${modificationContent}</td>
-            <td>${item.gmt_modify}</td>
+            <td style="width: 15%">${typeLabel}</td>
+            <td style="width: 65%; word-break: break-all; white-space: pre-wrap;" class="modification-content">${item.modification_log.replace(/\n/g, '<br>')}</td>
+            <td style="width: 20%">${item.gmt_modify}</td>
           </tr>
         `;
       }).join('');
