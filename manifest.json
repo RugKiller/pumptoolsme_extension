@@ -21,8 +21,7 @@
   },
   "host_permissions": [
     "https://*.gmgn.ai/*",
-    "https://*.dexscreener.com/*",
-    "<all_urls>"
+    "https://*.dexscreener.com/*"
   ],
   "content_scripts": [
     {
