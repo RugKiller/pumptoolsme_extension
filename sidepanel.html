@@ -538,7 +538,7 @@
     .login-section {
       margin: 4px auto;
       padding: 6px 12px;  /* 减小上下内边距 */
-      width: calc(100% - 16px);
+      width: calc(100% - 24px);  /* 修改宽度计算方式，减去左右内边距 */
       background: #ffffff;
       z-index: 100;
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
@@ -1298,7 +1298,7 @@
       <span class="username"></span>
       <button class="logout-button">disconnect</button>
     </div>
-    <button class="login-button">connect wallet</button>
+    <button class="login-button">连接钱包</button>
 
     <!-- 钱包选择弹窗 -->
     <div class="wallet-modal" style="display: none;">
