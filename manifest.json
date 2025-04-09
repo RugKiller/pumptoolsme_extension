@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "GMGN & DexScreener Analyzer",
   "version": "1.0",
-  "description": "Protecting the chives is a duty we cannot shirk.",
+  "description": "一键分析代币创建者和推特的历史信息，防止被割，助你安全上车",
   "permissions": [
     "activeTab",
     "scripting",
@@ -19,17 +19,6 @@
   "side_panel": {
     "default_path": "sidepanel.html"
   },
-  "host_permissions": [
-    "https://*.gmgn.ai/*",
-    "https://*.dexscreener.com/*"
-  ],
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content-script.js"],
-      "run_at": "document_start"
-    }
-  ],
   "web_accessible_resources": [
     {
       "resources": ["inject.js"],
