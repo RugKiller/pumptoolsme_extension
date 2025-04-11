@@ -19,6 +19,10 @@
   "side_panel": {
     "default_path": "sidepanel.html"
   },
+  "host_permissions": [
+    "https://*.gmgn.ai/*",
+    "https://*.dexscreener.com/*"
+  ],
   "web_accessible_resources": [
     {
       "resources": ["inject.js"],
