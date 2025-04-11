@@ -1,20 +1,30 @@
-class DexScreenerAnalyzer extends BaseAnalyzer {
+class AxiomAnalyzer extends BaseAnalyzer {
   static siteConfigs = {
-    'dexscreener.com': [
+    'axiom.trade': [
       {
-        xpath: '//*[@id="root"]/div/main/div/div/div[1]/div/div/div[1]/div/div[1]/h2/span[1]',
+        xpath: '/html/body/div[3]/div/div/div/div/div[1]/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/div[1]/span[1]',
         type: 'content',
         name: '代币符号',
         process: (text) => text.trim()
       },
       {
-        xpath: '//*[@id="root"]/div/main/div/div/div[1]/div/div/div[4]/div/div[1]/div[9]/span',
+        xpath: '/html/body/div[3]/div/div/div/div/div[1]/div[1]/div/div[1]/div[2]/div/div[1]/div[1]/div[2]/div/div/img',
         type: 'contract',
         name: '合约地址',
-        process: (element) => element.getAttribute('title')
+        process: (src) => {
+          try {
+            if (!src) return '未找到合约地址';
+            // 从图片 URL 中提取文件名（不包含扩展名）
+            const fileName = src.split('/').pop().split('.')[0];
+            return fileName || '未找到合约地址';
+          } catch (error) {
+            console.error('处理合约地址失败:', error);
+            return '处理合约地址失败';
+          }
+        }
       },
       {
-        xpath: '//*[@id="root"]/div/main/div/div/div[1]/div/div/div[6]/div/div/div[2]/ul/a[contains(@href, "twitter.com") or contains(@href, "x.com")]',
+        xpath: '/html/body/div[3]/div/div/div/div/div[1]/div[1]/div/div[1]/div[2]/div/div[1]/div[2]/div[2]/span[2]/a',
         type: 'twitter',
         name: '绑定推特',
         process: (href) => {
@@ -56,7 +66,7 @@ class DexScreenerAnalyzer extends BaseAnalyzer {
     try {
       const urlObj = new URL(url);
       const result = {
-        isGMGN: urlObj.hostname.includes('dexscreener.com'),
+        isGMGN: urlObj.hostname.includes('axiom.trade'),
         domain: urlObj.hostname,
         success: true
       };
@@ -119,16 +129,20 @@ class DexScreenerAnalyzer extends BaseAnalyzer {
                   ).singleNodeValue;
                   
                   if (element) {
+                    // if (element instanceof HTMLImageElement) {
                     results[config.type] = {
                       name: config.name,
-                      value: element.getAttribute('title') || '未找到'
+                      value: element.src,
+                      needsProcessing: true
                     };
-                  } else {
-                    results[config.type] = {
-                      name: config.name,
-                      value: '未找到'
-                    };
+                    return;
+                    // }
                   }
+                  
+                  results[config.type] = {
+                    name: config.name,
+                    value: '未找到'
+                  };
                 } else {
                   const element = document.evaluate(
                     config.xpath,
@@ -166,7 +180,7 @@ class DexScreenerAnalyzer extends BaseAnalyzer {
           });
           return results;
         },
-        args: [this.siteConfigs['dexscreener.com']]
+        args: [this.siteConfigs['axiom.trade']]
       });
 
       this.log('执行脚本结果:', result);
@@ -177,19 +191,19 @@ class DexScreenerAnalyzer extends BaseAnalyzer {
       };
 
       // 从 URL 中获取并转换链信息
-      const urlParts = new URL(tab.url).pathname.split('/');
-      let chain = urlParts[1].toLowerCase();
-      chain = this.chainMapping[chain] || chain;
+      let chain = 'sol';
 
       Object.entries(result[0].result).forEach(([type, data]) => {
         if (type === 'contract') {
+          const config = this.siteConfigs['axiom.trade'].find(c => c.type === type);
           processedResult.data[type] = {
-            ...data,
+            name: data.name,
+            value: config.process(data.value),
             chain: chain
           };
-        } else if (data.needsProcessing && this.siteConfigs['dexscreener.com'].find(c => c.type === type)?.process) {
+        } else if (data.needsProcessing && this.siteConfigs['axiom.trade'].find(c => c.type === type)?.process) {
           // 处理需要后续处理的数据（如推特链接）
-          const config = this.siteConfigs['dexscreener.com'].find(c => c.type === type);
+          const config = this.siteConfigs['axiom.trade'].find(c => c.type === type);
           processedResult.data[type] = {
             name: data.name,
             value: config.process(data.value)  // 这里传入的是 href 字符串
@@ -222,7 +236,7 @@ class DexScreenerAnalyzer extends BaseAnalyzer {
     const showError = () => {
       resultDiv.innerHTML = `
         <div class="result-item error">
-          ❌ 请打开DexScreener的合约详情页面再点击按钮
+          ❌ 请打开Axiom的合约详情页面再点击按钮
         </div>
       `;
     };
@@ -291,7 +305,7 @@ class DexScreenerAnalyzer extends BaseAnalyzer {
       'content': { label: '代币符号', value: info.content?.value || '-' },
       'chain': { 
         label: '所属链', 
-        value: info.contract?.chain || '-'
+        value: 'sol'
       },
       'contract': { 
         label: '合约地址', 
@@ -384,4 +398,5 @@ class DexScreenerAnalyzer extends BaseAnalyzer {
   }
 }
 
-window.DexScreenerAnalyzer = DexScreenerAnalyzer; 
+// 将分析器注册为全局变量
+window.AxiomAnalyzer = AxiomAnalyzer; 

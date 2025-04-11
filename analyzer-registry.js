@@ -2,6 +2,7 @@ class AnalyzerRegistry {
   static analyzers = {
     'gmgn.ai': GMGNAnalyzer,
     'dexscreener.com': DexScreenerAnalyzer,
+    'axiom.trade': AxiomAnalyzer,
     // 未来可以添加更多分析器
     // 'dexscreener.com': DexScreenerAnalyzer,
   };
@@ -20,6 +21,8 @@ class AnalyzerRegistry {
         return GMGNAnalyzer;
       } else if (hostname.includes('dexscreener.com')) {
         return DexScreenerAnalyzer;
+      } else if (hostname.includes('axiom.trade')) {
+        return AxiomAnalyzer;
       }
       
       return null;

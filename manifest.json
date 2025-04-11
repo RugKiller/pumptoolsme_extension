@@ -21,7 +21,8 @@
   },
   "host_permissions": [
     "https://*.gmgn.ai/*",
-    "https://*.dexscreener.com/*"
+    "https://*.dexscreener.com/*",
+    "https://*.axiom.trade/*"
   ],
   "web_accessible_resources": [
     {
