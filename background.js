@@ -19,4 +19,4 @@ chrome.action.onClicked.addListener(async (tab) => {
   } catch (error) {
     console.error('打开侧边栏失败:', error);
   }
-}); 
+});

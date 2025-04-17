@@ -1,3 +1,21 @@
+// 创建并插入面板
+function createPanel() {
+    const panel = document.createElement('div');
+    panel.id = 'pumptools-panel';
+
+    const frame = document.createElement('iframe');
+    frame.id = 'pumptools-frame';
+    frame.src = chrome.runtime.getURL('sidepanel.html');
+
+    panel.appendChild(frame);
+    document.body.appendChild(panel);
+}
+
+// 在页面加载完成后创建面板
+document.addEventListener('DOMContentLoaded', () => {
+    createPanel();
+});
+
 // 注入脚本到页面环境
 let isInitialized = false;
 let initializationPromise = null;
