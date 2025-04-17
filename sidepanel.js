@@ -16,7 +16,7 @@ const observer = new MutationObserver(async (mutations) => {
 // 初始化语言切换功能
 document.addEventListener('DOMContentLoaded', function() {
   const langSwitch = document.getElementById('langSwitch');
-  
+
   // 语言切换事件
   langSwitch.addEventListener('click', async () => {
     const newLang = Translator.currentLang === 'zh' ? 'en' : 'zh';
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // 分析按钮点击事件
 document.getElementById('analyzeBtn').addEventListener('click', async () => {
   const resultDiv = document.getElementById('result');
-  
+
   try {
     // 显示加载状态
     resultDiv.innerHTML = `
@@ -48,7 +48,7 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
 
     // 获取当前标签页
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    
+
     // 获取对应的分析器
     const analyzer = AnalyzerRegistry.getAnalyzerForURL(tab.url);
     if (!analyzer) {
@@ -73,13 +73,13 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
         }
       }
     };
-    
+
     // 立即展示基本信息和加载状态
     analyzer.updateUI(initialResult);
 
     // 获取规则分析结果
     const analysis = await ContractRules.analyze(pageInfo.data);
-    
+
     // 更新结果
     const finalResult = {
       ...initialResult,
@@ -100,4 +100,4 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
       </div>
     `;
   }
-}); 
+});

@@ -19,8 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
             });
 
-
-
             console.log("Backend response status:", response.status);
 
             const data = await response.json();
@@ -90,6 +88,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const responseData = await response.json();
             console.log('API response data:', responseData);
 
+            if (response.status === 401) {
+                console.log('Token expired, logging out...');
+                const logoutButton = document.querySelector('.logout-button');
+                if (logoutButton) {
+                    logoutButton.click();
+                }
+            }
+
             if (responseData.data && responseData.data.data && responseData.data.data.length > 0) {
                 console.log('Found rights data:', responseData.data.data);
                 // 找到最晚的过期时间
@@ -123,6 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateStatusDisplay('非会员', 'non-member');
                     purchaseLink.style.display = 'flex';
                 }
+
+
             } else {
                 console.log('No rights data found');
                 // 没有权限记录
@@ -132,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Failed to check membership:', error);
             updateStatusDisplay('检查失败', 'non-member');
+            disconnectWallet();
         } finally {
             refreshButton.classList.remove('loading');
         }
